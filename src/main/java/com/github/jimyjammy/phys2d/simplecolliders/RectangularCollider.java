@@ -1,92 +1,82 @@
 package main.java.com.github.jimyjammy.phys2d.simplecolliders;
 
+import main.java.com.github.jimyjammy.phys2d.locationhandle.vec2d;
+
 public class RectangularCollider {
-    public double x1; 
-    public double x2;
-    public double y1;
-    public double y2;
-    public double rot = 0;
-    public double gravityStrength = 0.97;
+    private vec2d x1y1; 
+    private vec2d x2y2;
+    private double rot = 0;
+    private float gravityStrength = 9.81f;
     private float mass = 0;
     private double v = 0;
-    public RectangularCollider(double x_1, double y_1, double x_2, double y_2, float mass){
-        x1 = x_1;
-        x2 = x_2;
+    private double torque;
+    public RectangularCollider(vec2d x1y1pos, vec2d x2y2pos, float mass){
+        x1y1 = x1y1pos;
+        x2y2 = x2y2pos;
 
-        y1 = y_1;
-        y2 = y_2;
         this.mass = mass; 
     }
 
-    public RectangularCollider(double x_1, double y_1, double x_2, double y_2, double rota, float mass){
-        this(x_1,y_1,x_2,y_2,mass);
+    public RectangularCollider(vec2d x1y1pos, vec2d x2y2pos, double rota, float mass){
+        this(x1y1pos,x2y2pos,mass);
         rot = rota;
     }
 
-    public RectangularCollider(double x_1, double y_1, double x_2, double y_2, double rota, double gravsStreng, float mass){
-        this(x_1,y_1,x_2,y_2,mass);
+    public RectangularCollider(vec2d x1y1pos, vec2d x2y2pos, double rota, float gravsStreng, float mass){
+        this(x1y1pos,x2y2pos,mass);
         rot = rota;
         gravityStrength = gravsStreng;
     }
 
     public void Update(double UpdateTime){
-        System.out.println(Double.toString(UpdateTime));
-        double a=(gravityStrength*mass*mass)/mass;
+        //System.out.println(Double.toString(UpdateTime));
+        double a=(gravityStrength*mass)/mass;
         //System.out.println(Double.toString(a));
         v=v+(a*UpdateTime);
         //System.out.println(Double.toString(v));
-        if (GetX1Y1()[1] > 450 || GetX1Y2()[1] > 450 || GetX2Y2()[1] > 450 || GetX2Y1()[1] > 450){
+        if ((GetX1Y1().y > 450 || GetX1Y2().y > 450 || GetX2Y2().y > 450 || GetX2Y1().y > 450 ) && v > 0){
             v = -v;
         }
-        move(0, v*UpdateTime);
+        move(new vec2d(0, v*UpdateTime));
     }
 
-    public double[] GetX2Y1(){
-        double cx = (    x2-((x1+x2)/2)    );
-        double cy = (    y1-((y1+y2)/2)    );
-        double x = (cy * Math.sin(Math.toRadians(rot))) + (cx * Math.cos(Math.toRadians(rot))) + ((x1+x2)/2);
-        double y = (cy * Math.cos(Math.toRadians(rot))) - (cx * Math.sin(Math.toRadians(rot))) + ((y1+y2)/2);
-        
-        
-        double[] l = new double[2];
-        l[0] = x;
-        l[1] = y;
+    public vec2d GetX2Y1(){
+        double cx = (    x2y2.x-((x1y1.x+x2y2.x)/2)    );
+        double cy = (    x1y1.y-((x1y1.y+x2y2.y)/2)    );
+        double x = (cy * Math.sin(Math.toRadians(rot))) + (cx * Math.cos(Math.toRadians(rot))) + ((x1y1.x+x2y2.x)/2);
+        double y = (cy * Math.cos(Math.toRadians(rot))) - (cx * Math.sin(Math.toRadians(rot))) + ((x1y1.y+x2y2.y)/2);
+
+        vec2d l = new vec2d(x,y);
         return l;
     }
 
-    public double[] GetX2Y2(){
-        double cx = (    x2-((x1+x2)/2)    );
-        double cy = (    y1-((y1+y2)/2)    );
-        double x = ((x1+x2)/2) - (cy * Math.sin(Math.toRadians(rot))) + (cx * Math.cos(Math.toRadians(rot)));
-        double y = ((y1+y2)/2) - (cy * Math.cos(Math.toRadians(rot))) - (cx * Math.sin(Math.toRadians(rot)));
+    public vec2d GetX2Y2(){
+        double cx = (    x2y2.x-((x1y1.x+x2y2.x)/2)    );
+        double cy = (    x1y1.y-((x1y1.y+x2y2.y)/2)    );
+        double x = ((x1y1.x+x2y2.x)/2) - (cy * Math.sin(Math.toRadians(rot))) + (cx * Math.cos(Math.toRadians(rot)));
+        double y = ((x1y1.y+x2y2.y)/2) - (cy * Math.cos(Math.toRadians(rot))) - (cx * Math.sin(Math.toRadians(rot)));
 
-        double[] l = new double[2];
-        l[0] = x;
-        l[1] = y;
+        vec2d l = new vec2d(x,y);
         return l;
     }
 
-    public double[] GetX1Y1(){
-        double cx = (    x2-((x1+x2)/2)    );
-        double cy = (    y1-((y1+y2)/2)    );
-        double x = (cy * Math.sin(Math.toRadians(rot))) - (cx * Math.cos(Math.toRadians(rot))) + ((x1+x2)/2);
-        double y = (cy * Math.cos(Math.toRadians(rot))) + (cx * Math.sin(Math.toRadians(rot))) + ((y1+y2)/2);
+    public vec2d GetX1Y1(){
+        double cx = (    x2y2.x-((x1y1.x+x2y2.x)/2)    );
+        double cy = (    x1y1.y-((x1y1.y+x2y2.y)/2)    );
+        double x = (cy * Math.sin(Math.toRadians(rot))) - (cx * Math.cos(Math.toRadians(rot))) + ((x1y1.x+x2y2.x)/2);
+        double y = (cy * Math.cos(Math.toRadians(rot))) + (cx * Math.sin(Math.toRadians(rot))) + ((x1y1.y+x2y2.y)/2);
 
-        double[] l = new double[2];
-        l[0] = x;
-        l[1] = y;
+        vec2d l = new vec2d(x,y);
         return l;
     }
 
-    public double[] GetX1Y2(){
-        double cx = (    x2-((x1+x2)/2)    );
-        double cy = (    y1-((y1+y2)/2)    );
-        double x = ((x1+x2)/2) - (cy * Math.sin(Math.toRadians(rot))) - (cx * Math.cos(Math.toRadians(rot)));
-        double y = ((y1+y2)/2) - (cy * Math.cos(Math.toRadians(rot))) + (cx * Math.sin(Math.toRadians(rot)));
-        
-        double[] l = new double[2];
-        l[0] = x;
-        l[1] = y;
+    public vec2d GetX1Y2(){
+        double cx = (    x2y2.x-((x1y1.x+x2y2.x)/2)    );
+        double cy = (    x1y1.y-((x1y1.y+x2y2.y)/2)    );
+        double x = ((x1y1.x+x2y2.x)/2) - (cy * Math.sin(Math.toRadians(rot))) - (cx * Math.cos(Math.toRadians(rot)));
+        double y = ((x1y1.y+x2y2.y)/2) - (cy * Math.cos(Math.toRadians(rot))) + (cx * Math.sin(Math.toRadians(rot)));
+
+        vec2d l = new vec2d(x,y);
         return l;
     }
 
@@ -98,32 +88,64 @@ public class RectangularCollider {
         return rot;
     }
 
-    public void move(double x, double y){
-        x1+=x;
-        x2+=x;
+    public void move(vec2d v){
+        x1y1.x+=v.x;
+        x2y2.x+=v.x;
 
-        y1+=y;
-        y2+=y;
+        x1y1.y+=v.y;
+        x2y2.y+=v.y;
     }
 
-    public void teleport(double x, double y){
-        double cx1 = (    x1-((x1+x2)/2)    );
-        double cy1 = (    y1-((y1+y2)/2)    );
-        double cx2 = (    x2-((x1+x2)/2)    );
-        double cy2 = (    y2-((y1+y2)/2)    );
-        
-        x1=x+cx1;
-        x2=x+cx2;
+    public void teleport(vec2d v){
+        double cx1 = (    x1y1.x-((x1y1.x+x2y2.x)/2)    );
+        double cy1 = (    x1y1.y-((x1y1.y+x2y2.y)/2)    );
+        double cx2 = (    x2y2.x-((x1y1.x+x2y2.x)/2)    );
+        double cy2 = (    x2y2.y-((x1y1.y+x2y2.y)/2)    );
 
-        y1=y+cy1;
-        y2=y+cy2;
+        x1y1.x=v.x+cx1;
+        x2y2.x=v.x+cx2;
+
+        x1y1.y=v.y+cy1;
+        x2y2.y=v.y+cy2;
     }
 
     public double getCX(){
-        return (x1+x2)/2;
+        return (x1y1.x+x2y2.x)/2;
     }
 
     public double getCY(){
-        return (y1+y2)/2;
+        return (x1y1.y+x2y2.y)/2;
     }
+
+    public float getDrag(){
+        float[] xs = new float[4];
+        xs[0] = (float)GetX1Y1().x;
+        xs[1] = (float)GetX2Y2().x;
+        xs[2] = (float)GetX1Y2().x;
+        xs[3] = (float)GetX2Y1().x;
+        java.util.Arrays.sort(xs);
+        return Math.abs(xs[0]);
+    }
+
+    public float getF1(){
+        float[] xs = new float[4];
+        xs[0] = (float)GetX1Y1().x;
+        xs[1] = (float)GetX2Y2().x;
+        xs[2] = (float)GetX1Y2().x;
+        xs[3] = (float)GetX2Y1().x;
+        java.util.Arrays.sort(xs);
+        return xs[0];
+    }
+
+    public float getF2(){
+        float[] xs = new float[4];
+        xs[0] = (float)GetX1Y1().x;
+        xs[1] = (float)GetX2Y2().x;
+        xs[2] = (float)GetX1Y2().x;
+        xs[3] = (float)GetX2Y1().x;
+        java.util.Arrays.sort(xs);
+        return xs[3];
+    }
+
+    public double get
 }
